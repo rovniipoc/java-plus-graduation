@@ -1,6 +1,21 @@
 server:
   port: 8080
 
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG
+
+#wire logging — вы увидите все HTTP-запросы и ответы,
+#включая заголовки и тело (полезно для отладки)
+reactor:
+  netty:
+    http:
+      client:
+        wiretap: true
+      server:
+        wiretap: true
+
 spring:
   cloud:
     gateway:
