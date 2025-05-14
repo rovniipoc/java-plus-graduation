@@ -25,10 +25,3 @@ spring:
           uri: lb://main-service
           predicates:
             - Path=/**
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true #— говорит Eureka использовать IP вместо hostname при регистрации сервиса. Это помогает избежать проблем с резолвом имён в сложных сетях.
