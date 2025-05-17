@@ -47,4 +47,12 @@ public class AdminEventController {
         log.info("Сформирован ответ Get /admin/events с телом: {}", response);
         return response;
     }
+
+    @GetMapping("/existsbycategory/{id}")
+    public boolean existsByCategoryId(@PathVariable Long id) {
+        log.info("Поступил запрос Get /admin/events/existsbycategory/{} на проверку существования события по id категории = {}", id, id);
+        boolean response = adminEventService.existsByCategoryId(id);
+        log.info("Сформирован ответ Get /admin/events/existsbycategory/{} с телом: {}", id, response);
+        return response;
+    }
 }

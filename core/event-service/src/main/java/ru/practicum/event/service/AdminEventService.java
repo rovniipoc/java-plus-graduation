@@ -14,4 +14,5 @@ public interface AdminEventService {
 
     EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest);
 
+    boolean existsByCategoryId(Long id);
 }

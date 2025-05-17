@@ -1,0 +1,68 @@
+package ru.practicum.category.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.category.dto.NewCategoryDto;
+import ru.practicum.category.mapper.CategoryMapper;
+import ru.practicum.category.model.Category;
+import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.exception.ValidationException;
+import ru.practicum.feign.EventServiceClient;
+
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class AdminCategoryServiceImpl implements AdminCategoryService {
+
+    private final CategoryRepository categoryRepository;
+    private final EventServiceClient eventServiceClient;
+
+    @Override
+    @Transactional
+    public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
+        Category category = CategoryMapper.mapToCategory(newCategoryDto);
+        checkDuplicateCategoryByName(category);
+        return CategoryMapper.mapToCategoryDto(categoryRepository.save(category));
+    }
+
+    @Override
+    @Transactional
+    public CategoryDto updateCategory(CategoryDto categoryDto, Long id) {
+        Category category = CategoryMapper.mapToCategory(categoryDto);
+        category.setId(id);
+        checkDuplicateCategoryByName(category);
+
+        return CategoryMapper.mapToCategoryDto(categoryRepository.save(category));
+    }
+
+    @Override
+    @Transactional
+    public void deleteCategoryById(Long id) {
+        checkCategoryIsNotUse(id);
+        categoryRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<Category> getFullCategoryById(long id) {
+        Optional<Category> category = categoryRepository.findById(id);
+        return category;
+    }
+
+    private void checkDuplicateCategoryByName(Category category) {
+        Category existCategory = categoryRepository.findByName(category.getName());
+
+        if (existCategory != null && existCategory.getId() != category.getId()) {
+            throw new ValidationException("Категория с name = " + category.getName() + " уже существует");
+        }
+    }
+
+    private void checkCategoryIsNotUse(Long id) {
+        if (eventServiceClient.existsByCategoryId(id)) {
+            throw new ValidationException("Нельзя удалить категорию, с которой связаны события");
+        }
+    }
+}
