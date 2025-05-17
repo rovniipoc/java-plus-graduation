@@ -24,10 +24,7 @@ import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -57,6 +54,12 @@ public class PublicEventServiceImpl implements PublicEventService {
 
         log.info("получен eventFullDto с ID = {}", eventFullDto.getId());
         return eventFullDto;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Event> getEventFullById(long id) {
+        return eventRepository.findById(id);
     }
 
     @Override

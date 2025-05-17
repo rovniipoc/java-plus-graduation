@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.EventSort;
+import ru.practicum.event.model.Event;
 import ru.practicum.event.service.PublicEventService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/events")
@@ -29,6 +31,14 @@ public class PublicEventController {
         log.info("Поступил запрос Get /events/{} на получение Event с id = {}", id, id);
         EventFullDto response = publicEventService.getEventById(id, request);
         log.info("Сформирован ответ Get /events/{} с телом: {}", id, response);
+        return response;
+    }
+
+    @GetMapping("/{id}/full")
+    public Optional<Event> getEventFullById(@PathVariable long id) {
+        log.info("Поступил запрос Get /events/{}/full на получение Event model с id = {}", id, id);
+        Optional<Event> response = publicEventService.getEventFullById(id);
+        log.info("Сформирован ответ Get /events/{}/full с телом: {}", id, response);
         return response;
     }
 

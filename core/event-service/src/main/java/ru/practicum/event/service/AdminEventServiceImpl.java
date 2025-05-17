@@ -84,6 +84,12 @@ public class AdminEventServiceImpl implements AdminEventService {
     }
 
     @Override
+    @Transactional
+    public Event saveEventFull(Event event) {
+        return eventRepository.save(event);
+    }
+
+    @Override
     public boolean existsByCategoryId(Long id) {
         return eventRepository.existsByCategoryId(id);
     }

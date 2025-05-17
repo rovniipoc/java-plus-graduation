@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
+import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
 import ru.practicum.event.service.AdminEventService;
 import ru.practicum.validation.UpdateGroup;
@@ -29,6 +30,14 @@ public class AdminEventController {
         log.info("Поступил запрос Patch /admin/events/{} на обновление Event с телом = {}", id, updateEventAdminRequest);
         EventFullDto response = adminEventService.updateEvent(id, updateEventAdminRequest);
         log.info("Сформирован ответ Patch /admin/events/{} с телом: {}", id, response);
+        return response;
+    }
+
+    @PostMapping
+    public Event saveEvent(@RequestBody Event event) {
+        log.info("Поступил запрос Post /admin/events на сохранение Event с телом = {}", event);
+        Event response = adminEventService.saveEventFull(event);
+        log.info("Сформирован ответ Post /admin/events с телом: {}", response);
         return response;
     }
 
