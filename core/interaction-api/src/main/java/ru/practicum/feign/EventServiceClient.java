@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import ru.practicum.event.model.Event;
 
 import java.util.Optional;
+import java.util.Set;
 
 @FeignClient(name = "event-service")
 public interface EventServiceClient {
@@ -21,4 +22,7 @@ public interface EventServiceClient {
 
     @PostMapping("/admin/events")
     Event saveEvent(@RequestBody Event event) throws FeignException;
+
+    @GetMapping("/admin/events/findbyidin")
+    Set<Event> findByIdIn(@RequestBody Set<Long> ids) throws FeignException;
 }

@@ -7,6 +7,7 @@ import ru.practicum.event.model.EventState;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface AdminEventService {
 
@@ -18,4 +19,6 @@ public interface AdminEventService {
     Event saveEventFull(Event event);
 
     boolean existsByCategoryId(Long id);
+
+    Set<Event> findByIdIn(Set<Long> ids);
 }

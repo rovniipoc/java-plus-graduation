@@ -21,6 +21,7 @@ import ru.practicum.feign.CategoryServiceClient;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -92,6 +93,11 @@ public class AdminEventServiceImpl implements AdminEventService {
     @Override
     public boolean existsByCategoryId(Long id) {
         return eventRepository.existsByCategoryId(id);
+    }
+
+    @Override
+    public Set<Event> findByIdIn(Set<Long> ids) {
+        return eventRepository.findByIdIn(ids);
     }
 
     private Event checkEventExist(Long id) {
