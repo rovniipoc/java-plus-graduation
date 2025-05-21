@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PublicEventServiceImpl implements PublicEventService {
 
-    //TODO вынести APP_NAME в конфиг
-    private static final String APP_NAME = "ewm-main";
+    @Value("${app.name:ewm-main}") // "ewm-main" — значение по умолчанию
+    private String APP_NAME;
 
     private final EventRepository eventRepository;
     private final StatFeignClient statsClient;
