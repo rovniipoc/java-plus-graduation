@@ -1,7 +1,9 @@
 package ru.practicum.exception;
 
+import feign.FeignException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -58,5 +60,21 @@ public class ErrorHandler {
     public ErrorResponse handleBadRequestException(BadRequestException e) {
         final List<Violation> violations = List.of(new Violation("BAD REQUEST ERROR", e.getMessage()));
         return new ErrorResponse(violations);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleParticipantLimitReachedException(ParticipantLimitReachedException e) {
+        final List<Violation> violations = List.of(new Violation("CONFLICT ERROR", e.getMessage()));
+        return new ErrorResponse(violations);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleFeignException(FeignException ex) {
+        HttpStatus status = HttpStatus.resolve(ex.status()) != null ?
+                HttpStatus.resolve(ex.status()) : HttpStatus.INTERNAL_SERVER_ERROR;
+        Violation violation = new Violation("FEIGN ERROR", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(List.of(violation));
+        return ResponseEntity.status(status).body(errorResponse);
     }
 }
