@@ -67,7 +67,7 @@ public class AdminEventController {
     }
 
     @GetMapping("/findbyidin")
-    public Set<Event> findByIdIn(@RequestBody Set<Long> ids) {
+    public Set<Event> findByIdIn(@RequestParam(required = false) Set<Long> ids) {
         log.info("Поступил запрос Get /admin/events/findbyidin на получение событий по списку id {}", ids);
         Set<Event> response = adminEventService.findByIdIn(ids);
         log.info("Сформирован ответ Get /admin/events/findbyidin с телом: {}", response);

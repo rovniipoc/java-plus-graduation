@@ -2,16 +2,13 @@ package ru.practicum.feign;
 
 import feign.FeignException;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.model.Event;
 
 import java.util.Optional;
 import java.util.Set;
 
-@FeignClient(name = "event-service")
+@FeignClient(name = "event-service", contextId = "eventServiceClient")
 public interface EventServiceClient {
 
     @GetMapping("/admin/events/existsbycategory/{id}")
@@ -24,5 +21,5 @@ public interface EventServiceClient {
     Event saveEvent(@RequestBody Event event) throws FeignException;
 
     @GetMapping("/admin/events/findbyidin")
-    Set<Event> findByIdIn(@RequestBody Set<Long> ids) throws FeignException;
+    Set<Event> findByIdIn(@RequestParam Set<Long> ids) throws FeignException;
 }
