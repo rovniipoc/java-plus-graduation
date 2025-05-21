@@ -8,7 +8,7 @@ import ru.practicum.user.model.User;
 
 import java.util.Optional;
 
-@FeignClient(name = "user-service", path = "/admin/users")
+@FeignClient(name = "user-service", path = "/admin/users", contextId = "userServiceClient")
 public interface UserServiceClient {
 
     @GetMapping("/{id}")

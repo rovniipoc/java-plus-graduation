@@ -7,7 +7,7 @@ import ru.practicum.category.model.Category;
 
 import java.util.Optional;
 
-@FeignClient(name = "category-service", path = "/categories")
+@FeignClient(name = "category-service", path = "/categories", contextId = "categoryServiceClient")
 public interface CategoryServiceClient {
 
     @GetMapping("/{catId}/full")

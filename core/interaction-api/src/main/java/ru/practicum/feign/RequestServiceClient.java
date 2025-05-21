@@ -10,7 +10,7 @@ import ru.practicum.request.dto.ParticipationRequestDto;
 
 import java.util.List;
 
-@FeignClient(name = "request-service", path = "/users")
+@FeignClient(name = "request-service", path = "/users", contextId = "requestServiceClient")
 public interface RequestServiceClient {
 
     @GetMapping("/{userId}/requests")
