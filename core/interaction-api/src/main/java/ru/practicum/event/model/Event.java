@@ -1,6 +1,7 @@
 package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import ru.practicum.category.model.Category;
@@ -52,11 +53,13 @@ public class Event {
     private LocalDateTime publishedOn;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "initiator_id")
     private User initiator;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "category_id")
     private Category category;
 

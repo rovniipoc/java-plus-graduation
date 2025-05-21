@@ -1,6 +1,7 @@
 package ru.practicum.request.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import ru.practicum.event.model.Event;
@@ -23,11 +24,13 @@ public class ParticipationRequest {
 
     // Событие
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "event_id")
     private Event event;
 
     // Пользователь, отправивший заявку
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "requester_id")
     private User requester;
 
