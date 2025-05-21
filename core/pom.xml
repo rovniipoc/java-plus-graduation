@@ -13,7 +13,6 @@
     <name>core</name>
 
     <modules>
-        <module>main-service</module>
         <module>event-service</module>
         <module>interaction-api</module>
         <module>request-service</module>
