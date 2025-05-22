@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS compilation_events
     FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE
 );
 
-CREATE TABLE event_comments
+CREATE TABLE IF NOT EXISTS event_comments
 (
     id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     text         VARCHAR,
