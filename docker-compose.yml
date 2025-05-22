@@ -18,14 +18,14 @@ services:
       interval: 5s
       retries: 10
 
-  ewm-db:
+  main-db:
     image: postgres:16.1
     container_name: main-db
     ports:
       - "6542:5432"
-    volumes:
-      - ./resources/db:/var/lib/postgresql/data
-      - ./resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+#    volumes:
+#      - ./resources/db:/var/lib/postgresql/data
+#      - ./resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
       - POSTGRES_DB=maindb
       - POSTGRES_USER=dbuser
@@ -35,3 +35,21 @@ services:
       timeout: 5s
       interval: 5s
       retries: 10
+
+#  ewm-db:
+#    image: postgres:16.1
+#    container_name: main-db
+#    ports:
+#      - "6542:5432"
+#    volumes:
+#      - ./resources/db:/var/lib/postgresql/data
+#      - ./resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+#    environment:
+#      - POSTGRES_DB=maindb
+#      - POSTGRES_USER=dbuser
+#      - POSTGRES_PASSWORD=12345
+#    healthcheck:
+#      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+#      timeout: 5s
+#      interval: 5s
+#      retries: 10

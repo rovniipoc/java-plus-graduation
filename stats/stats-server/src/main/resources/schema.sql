@@ -1,6 +1,3 @@
-DROP TABLE if EXISTS endpoint_hit;
-
-
 CREATE TABLE IF NOT EXISTS endpoint_hit
 (
     id        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
