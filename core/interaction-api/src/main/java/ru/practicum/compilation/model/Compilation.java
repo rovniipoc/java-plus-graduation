@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Data
-@Table(name = "compilations", schema = "public")
+@Table(name = "compilations")
 public class Compilation {
 
     @Id

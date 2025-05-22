@@ -10,7 +10,7 @@ import ru.practicum.user.model.User;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "event_comments", schema = "public")
+@Table(name = "event_comments")
 @Data
 public class Comment {
 
