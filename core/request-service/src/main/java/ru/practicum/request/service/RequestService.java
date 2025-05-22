@@ -36,7 +36,7 @@ public class RequestService {
 
     public List<ParticipationRequestDto> getRequestsOfUser(Long userId) {
         getUserOrThrow(userId);
-        List<ParticipationRequest> requests = requestRepository.findAllByRequesterId(userId);
+        List<ParticipationRequest> requests = requestRepository.findAllByRequester(userId);
         return requests.stream().map(RequestMapper::toParticipationRequestDto)//toParticipationRequestDto
                 .collect(Collectors.toList());
     }
@@ -54,7 +54,7 @@ public class RequestService {
         if (event.getState() != EventState.PUBLISHED) {
             throw new ValidationException("Нельзя участвовать в неопубликованном событии.");
         }
-        if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
+        if (requestRepository.existsByRequesterAndEvent(userId, eventId)) {
             throw new ValidationException("Нельзя повторно подавать заявку на то же событие.");
         }
         if (event.getParticipantLimit() != 0 && event.getConfirmedRequests() >= event.getParticipantLimit()) {
@@ -63,8 +63,8 @@ public class RequestService {
 
         ParticipationRequest request = new ParticipationRequest();
         request.setCreated(LocalDateTime.now());
-        request.setEvent(event);
-        request.setRequester(user);
+        request.setEvent(eventId);
+        request.setRequester(userId);
 /* Условие !event.isRequestModeration()- если для события не требуется премодерация заявок на участие, то заявка должна автоматически переходить в статус CONFIRMED.
 "Если для события отключена пре-модерация запросов на участие, то запрос должен автоматически перейти в состояние подтвержденного".
 Условие event.getParticipantLimit() == 0 - если нет ограничения на количество участников (лимит равен 0), заявка тоже должна автоматически подтверждаться.
@@ -84,14 +84,14 @@ public class RequestService {
     @Transactional
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
 
-        ParticipationRequest request = requestRepository.findByIdAndRequesterId(requestId, userId)
+        ParticipationRequest request = requestRepository.findByIdAndRequester(requestId, userId)
                 .orElseThrow(() -> new NotFoundException("Заявка не найдена или не принадлежит пользователю."));
         boolean wasConfirmed = RequestStatus.CONFIRMED.equals(request.getStatus());
         request.setStatus(RequestStatus.CANCELED);
         ParticipationRequest updatedRequest = requestRepository.save(request);
 
         if (wasConfirmed) {
-            updateConfirmedRequests(request.getEvent().getId());
+            updateConfirmedRequests(request.getEvent());
         }
 
 
@@ -105,7 +105,7 @@ public class RequestService {
         if (!event.getInitiator().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
-        List<ParticipationRequest> requests = requestRepository.findAllByEventId(eventId);
+        List<ParticipationRequest> requests = requestRepository.findAllByEvent(eventId);
         return requests.stream().map(RequestMapper::toParticipationRequestDto).collect(Collectors.toList());
     }
 

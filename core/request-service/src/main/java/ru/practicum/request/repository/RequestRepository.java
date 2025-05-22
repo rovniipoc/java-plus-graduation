@@ -11,10 +11,10 @@ import java.util.Optional;
 public interface RequestRepository extends JpaRepository<ParticipationRequest, Long> {
 
     // Все заявки конкретного пользователя
-    List<ParticipationRequest> findAllByRequesterId(Long requesterId);
+    List<ParticipationRequest> findAllByRequester(Long requesterId);
 
     // Все заявки на конкретное событие
-    List<ParticipationRequest> findAllByEventId(Long eventId);
+    List<ParticipationRequest> findAllByEvent(Long eventId);
 
     // Метод для получения количества заявок с определенным eventId и статусом CONFIRMED
     @Query("""
@@ -24,9 +24,9 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, L
             """)
     Long countConfirmedRequestsByEventId(@Param("eventId") Long eventId);
 
-    boolean existsByRequesterIdAndEventId(Long requesterId, Long eventId);
+    boolean existsByRequesterAndEvent(Long requesterId, Long eventId);
 
-    Optional<ParticipationRequest> findByIdAndRequesterId(Long requestId, Long requesterId);
+    Optional<ParticipationRequest> findByIdAndRequester(Long requestId, Long requesterId);
 
     @Query("SELECT e.views FROM Event e WHERE e.id = :eventId")
     Long getViewsForEvent(@Param("eventId") Long eventId);
