@@ -39,13 +39,17 @@ public class AdminUserService {
         userRepository.deleteById(id);
     }
 
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public List<User> getUsersWithIds(List<Long> ids) {
+        return userRepository.findAllById(ids);
+    }
+
     private void checkDuplicateUserByEmail(NewUserRequest user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new ValidationException("Пользователь с email = " + user.getEmail() + " уже существует");
         }
-    }
-
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
     }
 }

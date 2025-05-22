@@ -47,7 +47,7 @@ public class RequestService {
         Event event = getEventOrThrow(eventId);
 
 
-        if (event.getInitiator().getId().equals(userId)) {
+        if (event.getInitiator().equals(userId)) {
             throw new ValidationException("Инициатор события не может добавить запрос на участие в своём событии.");
         }
 
@@ -102,7 +102,7 @@ public class RequestService {
     public List<ParticipationRequestDto> getRequestsForUserEvent(Long userId, Long eventId) {
         getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiator().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
         List<ParticipationRequest> requests = requestRepository.findAllByEventId(eventId);
@@ -113,7 +113,7 @@ public class RequestService {
     @Transactional
     public EventRequestStatusUpdateResult changeRequestsStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest statusUpdateRequest) {
         Event event = getEventOrThrow(eventId);
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiator().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
 

@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.EventSort;
-import ru.practicum.event.dto.mapper.EventMapper;
+import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
 import ru.practicum.event.repository.EventRepository;
@@ -37,6 +37,7 @@ public class PublicEventServiceImpl implements PublicEventService {
 
     private final EventRepository eventRepository;
     private final StatFeignClient statsClient;
+    private final EventMapper eventMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -51,7 +52,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         addHit(request);
         updateEventViewsInRepository(event);
 
-        EventFullDto eventFullDto = EventMapper.toEventFullDto(event);
+        EventFullDto eventFullDto = eventMapper.toEventFullDto(event);
 
         log.info("получен eventFullDto с ID = {}", eventFullDto.getId());
         return eventFullDto;
@@ -98,7 +99,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         List<EventShortDto> eventShortDtos = new ArrayList<>();
         for (Event event : events) {
             Event ev = updateEventViewsInRepository(event);
-            EventShortDto dto = EventMapper.toEventShortDto(ev);
+            EventShortDto dto = eventMapper.toEventShortDto(ev);
             eventShortDtos.add(dto);
         }
 

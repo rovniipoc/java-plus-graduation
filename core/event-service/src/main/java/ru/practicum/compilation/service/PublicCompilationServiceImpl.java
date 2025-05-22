@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.dto.CompilationDto;
-import ru.practicum.compilation.dto.mapper.CompilationMapper;
+import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.exception.NotFoundException;
@@ -19,11 +19,12 @@ import java.util.List;
 @Slf4j
 public class PublicCompilationServiceImpl implements PublicCompilationService {
     private final CompilationRepository compilationRepository;
+    private final CompilationMapper compilationMapper;
 
     @Override
     @Transactional(readOnly = true)
     public CompilationDto getCompilationById(long id) {
-        CompilationDto compilationDto = CompilationMapper
+        CompilationDto compilationDto = compilationMapper
                 .toCompilationDto(compilationRepository.findById(id)
                         .orElseThrow(() -> new NotFoundException("Подборка с " + id + "не найдена")));
         return compilationDto;
@@ -39,7 +40,7 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
             pageCompilations = compilationRepository.findAll(page);
         }
 
-        List<CompilationDto> compilationsDto = CompilationMapper.toCompilationDto(pageCompilations);
+        List<CompilationDto> compilationsDto = compilationMapper.toCompilationDto(pageCompilations);
         log.info("получен список compilationsDto from = " + from + " size " + size);
 
         return compilationsDto;

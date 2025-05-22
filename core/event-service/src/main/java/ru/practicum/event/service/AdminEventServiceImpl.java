@@ -10,7 +10,7 @@ import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.StateAction;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
-import ru.practicum.event.dto.mapper.EventMapper;
+import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
 import ru.practicum.event.repository.EventRepository;
@@ -32,6 +32,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
+    private final EventMapper eventMapper;
 
     @Override
     public List<EventFullDto> findEventByParams(List<Long> userIds, List<EventState> states, List<Long> categoryIds,
@@ -40,7 +41,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         Pageable pageable = PageRequest.of(from.intValue(), size.intValue());
         Page<Event> events = eventRepository.findByParams(userIds, states, categoryIds, rangeStart, rangeEnd, pageable);
 
-        return EventMapper.toEventFullDto(events);
+        return eventMapper.toEventFullDto(events.toList());
     }
 
     @Transactional
@@ -81,7 +82,7 @@ public class AdminEventServiceImpl implements AdminEventService {
             existEvent.setTitle(updateEventAdminRequest.getTitle());
         }
 
-        return EventMapper.toEventFullDto(eventRepository.save(existEvent));
+        return eventMapper.toEventFullDto(eventRepository.save(existEvent));
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import ru.practicum.category.model.Category;
-import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -52,10 +51,8 @@ public class Event {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @JoinColumn(name = "initiator_id")
-    private User initiator;
+    @Column(name = "initiator_id", nullable = false)
+    private Long initiator;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

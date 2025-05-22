@@ -17,13 +17,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Set<Event> findByIdIn(Set<Long> ids);
 
-    Page<Event> findAllByInitiatorId(Long userId, Pageable pageable);
+    Page<Event> findAllByInitiator(Long userId, Pageable pageable);
 
     boolean existsByCategoryId(Long categoryId);
 
     @Query("""
             select e from Event e
-            where (coalesce(:userIds, null) is null or e.initiator.id in :userIds)
+            where (coalesce(:userIds, null) is null or e.initiator in :userIds)
             and (coalesce(:states, null) is null or e.state in :states)
             and (coalesce(:categoryIds, null) is null or e.category.id in :categoryIds)
             and (coalesce(:rangeStart, null) is null or e.eventDate >= :rangeStart)

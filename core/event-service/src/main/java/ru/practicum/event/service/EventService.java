@@ -11,7 +11,7 @@ import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.UpdateEventUserRequest;
-import ru.practicum.event.dto.mapper.EventMapper;
+import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
 import ru.practicum.event.repository.EventRepository;
@@ -35,6 +35,7 @@ public class EventService {
     private final UserServiceClient userServiceClient;
     private final CategoryRepository categoryRepository;
     private final RequestServiceClient requestServiceClient;
+    private final EventMapper eventMapper;
 
     private static final long HOURS_BEFORE_EVENT = 2;
 
@@ -44,10 +45,10 @@ public class EventService {
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        Page<Event> eventPage = eventRepository.findAllByInitiatorId(userId, pageRequest);
+        Page<Event> eventPage = eventRepository.findAllByInitiator(userId, pageRequest);
 
         return eventPage.stream()
-                .map(EventMapper::toEventShortDto)
+                .map(eventMapper::toEventShortDto)
                 .collect(Collectors.toList());
 
     }
@@ -60,16 +61,16 @@ public class EventService {
         checkEventDate(dto.getEventDate());
         Event event = EventMapper.toEvent(dto, initiator, category);
         Event saved = eventRepository.save(event);
-        return EventMapper.toEventFullDto(saved);
+        return eventMapper.toEventFullDto(saved);
     }
 
     public EventFullDto getEventOfUser(Long userId, Long eventId) {
         getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiator().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
-        return EventMapper.toEventFullDto(event);
+        return eventMapper.toEventFullDto(event);
 
     }
 
@@ -77,7 +78,7 @@ public class EventService {
     public EventFullDto updateEventOfUser(Long userId, Long eventId, UpdateEventUserRequest dto) {
         getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiator().equals(userId)) {
             throw new NotFoundException("Событие не принадлежит пользователю id=" + userId);
         }
 
@@ -101,7 +102,7 @@ public class EventService {
         EventMapper.updateEventFromUserRequest(event, dto, category);
         Event updated = eventRepository.save(event);
 
-        return EventMapper.toEventFullDto(updated);
+        return eventMapper.toEventFullDto(updated);
     }
 
     // Вспомогательные методы

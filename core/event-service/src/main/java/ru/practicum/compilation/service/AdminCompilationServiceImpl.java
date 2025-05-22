@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
-import ru.practicum.compilation.dto.mapper.CompilationMapper;
+import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.event.model.Event;
@@ -22,12 +22,13 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
+    private final CompilationMapper compilationMapper;
 
     @Override
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = loadEventsIntoCompilation(newCompilationDto);
-        return CompilationMapper.toCompilationDto(compilationRepository.save(compilation));
+        return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 
     @Override
@@ -44,7 +45,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
             loadEventsIntoCompilation(compilation, updateCompilationRequest);
         }
 
-        return CompilationMapper.toCompilationDto(compilationRepository.save(compilation));
+        return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 
     @Override
