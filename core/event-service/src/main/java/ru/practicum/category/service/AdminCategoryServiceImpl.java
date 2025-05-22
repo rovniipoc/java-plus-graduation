@@ -8,10 +8,8 @@ import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ValidationException;
-import ru.practicum.feign.EventServiceClient;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +17,7 @@ import java.util.Optional;
 public class AdminCategoryServiceImpl implements AdminCategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final EventServiceClient eventServiceClient;
+    private final EventRepository eventRepository;
 
     @Override
     @Transactional
@@ -46,12 +44,6 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         categoryRepository.deleteById(id);
     }
 
-    @Override
-    public Optional<Category> getFullCategoryById(long id) {
-        Optional<Category> category = categoryRepository.findById(id);
-        return category;
-    }
-
     private void checkDuplicateCategoryByName(Category category) {
         Category existCategory = categoryRepository.findByName(category.getName());
 
@@ -61,7 +53,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     }
 
     private void checkCategoryIsNotUse(Long id) {
-        if (eventServiceClient.existsByCategoryId(id)) {
+        if (eventRepository.existsByCategoryId(id)) {
             throw new ValidationException("Нельзя удалить категорию, с которой связаны события");
         }
     }

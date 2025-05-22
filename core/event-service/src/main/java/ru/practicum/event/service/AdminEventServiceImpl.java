@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.StateAction;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
@@ -16,7 +17,6 @@ import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
-import ru.practicum.feign.CategoryServiceClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +31,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     private static final Integer HOURS_BEFORE_EVENT_START = 1;
 
     private final EventRepository eventRepository;
-    private final CategoryServiceClient categoryServiceClient;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public List<EventFullDto> findEventByParams(List<Long> userIds, List<EventState> states, List<Long> categoryIds,
@@ -52,7 +52,7 @@ public class AdminEventServiceImpl implements AdminEventService {
             existEvent.setAnnotation(updateEventAdminRequest.getAnnotation());
         }
         if (updateEventAdminRequest.getCategory() != null) {
-            existEvent.setCategory(categoryServiceClient.getFullCategoriesById(updateEventAdminRequest.getCategory())
+            existEvent.setCategory(categoryRepository.findById(updateEventAdminRequest.getCategory())
                     .orElseThrow(() -> new NotFoundException("Категории c id = " + updateEventAdminRequest.getCategory() + " не существует")));
         }
         if (updateEventAdminRequest.getDescription() != null) {

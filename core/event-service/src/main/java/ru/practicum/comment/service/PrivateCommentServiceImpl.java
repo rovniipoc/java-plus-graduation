@@ -11,10 +11,10 @@ import ru.practicum.comment.dto.UpdateCommentDto;
 import ru.practicum.comment.dto.mapper.CommentMapper;
 import ru.practicum.comment.model.Comment;
 import ru.practicum.comment.repository.CommentRepository;
+import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.feign.EventServiceClient;
 import ru.practicum.feign.UserServiceClient;
 import ru.practicum.user.model.User;
 
@@ -27,7 +27,7 @@ import java.util.List;
 public class PrivateCommentServiceImpl implements PrivateCommentService {
 
     private final CommentRepository commentRepository;
-    private final EventServiceClient eventServiceClient;
+    private final EventRepository eventRepository;
     private final UserServiceClient userServiceClient;
 
     @Override
@@ -63,7 +63,7 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
     }
 
     private Event checkEventExist(Long id) {
-        return eventServiceClient.getEventFullById(id)
+        return eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("События с id = " + id + " не существует"));
     }
 

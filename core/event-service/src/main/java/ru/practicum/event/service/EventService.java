@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.model.Category;
+import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
@@ -17,7 +18,6 @@ import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
-import ru.practicum.feign.CategoryServiceClient;
 import ru.practicum.feign.RequestServiceClient;
 import ru.practicum.feign.UserServiceClient;
 import ru.practicum.user.model.User;
@@ -33,7 +33,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserServiceClient userServiceClient;
-    private final CategoryServiceClient categoryServiceClient;
+    private final CategoryRepository categoryRepository;
     private final RequestServiceClient requestServiceClient;
 
     private static final long HOURS_BEFORE_EVENT = 2;
@@ -132,7 +132,7 @@ public class EventService {
     }
 
     private Category getCategoryOrThrow(Long catId) {
-        return categoryServiceClient.getFullCategoriesById(catId)
+        return categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Категория с id=" + catId + " не найдена"));
     }
 

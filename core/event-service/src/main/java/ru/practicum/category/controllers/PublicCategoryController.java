@@ -1,23 +1,19 @@
-package ru.practicum.category.controller;
+package ru.practicum.category.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.category.dto.CategoryDto;
-import ru.practicum.category.model.Category;
-import ru.practicum.category.service.AdminCategoryService;
 import ru.practicum.category.service.PublicCategoryService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/categories")
 public class PublicCategoryController {
-    private final PublicCategoryService publicCategoryService;
-    private final AdminCategoryService adminCategoryService;
+    public final PublicCategoryService publicCategoryService;
 
     @GetMapping
     public List<CategoryDto> getAllCategories(@RequestParam(defaultValue = "0") int from, @RequestParam(defaultValue = "10") int size) {
@@ -29,17 +25,9 @@ public class PublicCategoryController {
 
     @GetMapping("/{catId}")
     public CategoryDto getCategoriesById(@PathVariable long catId) {
-        log.info("GET-запрос к эндпоинту: '/categories/{}' на получение categories", catId);
+        log.info("GET-запрос к эндпоинту: '/categories/{catId}' на получение categories");
         CategoryDto response = publicCategoryService.getCategoryById(catId);
         log.info("Сформирован ответ Get /categories/{} с телом: {}", catId, response);
-        return response;
-    }
-
-    @GetMapping("/{catId}/full")
-    public Optional<Category> getFullCategoriesById(@PathVariable long catId) {
-        log.info("GET-запрос к эндпоинту: '/categories/{}/full' на получение categories model", catId);
-        Optional<Category> response = adminCategoryService.getFullCategoryById(catId);
-        log.info("Сформирован ответ Get /categories/{}/full с телом: {}", catId, response);
         return response;
     }
 }
