@@ -33,8 +33,8 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
     @Override
     @Transactional
     public CommentShortDto createComment(Long userId, Long eventId, NewComment newComment) {
-        User user = checkUserExist(userId);
-        Event event = checkEventExist(eventId);
+        User user = findUserIfExist(userId);
+        Event event = findEventIfExist(eventId);
         Comment comment = CommentMapper.fromNewCommentToComment(newComment, user, event);
         return CommentMapper.toCommentShortDto(commentRepository.save(comment));
     }
@@ -62,12 +62,12 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
         commentRepository.delete(comment);
     }
 
-    private Event checkEventExist(Long id) {
+    private Event findEventIfExist(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("События с id = " + id + " не существует"));
     }
 
-    private User checkUserExist(Long id) {
+    private User findUserIfExist(Long id) {
         return userServiceClient.getUserById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователя с id = " + id + " не существует"));
     }

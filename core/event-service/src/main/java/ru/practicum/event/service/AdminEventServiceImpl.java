@@ -47,7 +47,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     @Transactional
     @Override
     public EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
-        Event existEvent = checkEventExist(eventId);
+        Event existEvent = findEventIfExist(eventId);
 
         if (updateEventAdminRequest.getAnnotation() != null) {
             existEvent.setAnnotation(updateEventAdminRequest.getAnnotation());
@@ -101,7 +101,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         return eventRepository.findByIdIn(ids);
     }
 
-    private Event checkEventExist(Long id) {
+    private Event findEventIfExist(Long id) {
         Optional<Event> maybeEvent = eventRepository.findById(id);
         if (maybeEvent.isPresent()) {
             return maybeEvent.get();

@@ -34,7 +34,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     @Override
     @Transactional
     public CompilationDto updateCompilation(UpdateCompilationRequest updateCompilationRequest, Long id) {
-        Compilation compilation = checkExistCompilationById(id);
+        Compilation compilation = findCompilationByIdIfExist(id);
         if (updateCompilationRequest.getTitle() != null && !updateCompilationRequest.getTitle().isBlank()) {
             compilation.setTitle(updateCompilationRequest.getTitle());
         }
@@ -51,7 +51,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     @Override
     @Transactional
     public void deleteCompilationById(Long id) {
-        checkExistCompilationById(id);
+        findCompilationByIdIfExist(id);
         compilationRepository.deleteById(id);
     }
 
@@ -68,7 +68,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         return compilation;
     }
 
-    private Compilation checkExistCompilationById(Long id) {
+    private Compilation findCompilationByIdIfExist(Long id) {
         return compilationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Подборки событий с id = " + id + " не существует"));
     }
