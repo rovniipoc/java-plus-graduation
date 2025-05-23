@@ -14,3 +14,9 @@ spring:
   sql:
     init:
       mode: always
+  cloud:
+    openfeign:
+      okhttp:
+        enabled: true
+      circuitbreaker:
+        enabled: true
