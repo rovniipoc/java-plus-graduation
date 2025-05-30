@@ -1,21 +1,36 @@
 services:
 
-  stats-db:
+#  stats-db:
+#    image: postgres:16.1
+#    container_name: stats-db
+#    ports:
+#      - "6541:5432"
+#    volumes:
+#      - ./stats/stats-server/src/main/resources/db:/var/lib/postgresql/data
+#      - ./stats/stats-server/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+#    environment:
+#      - POSTGRES_DB=statsdb
+#      - POSTGRES_USER=dbuser
+#      - POSTGRES_PASSWORD=12345
+#    healthcheck:
+#      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+#      timeout: 5s
+#      interval: 5s
+#      retries: 10
+
+  analyzer-db:
     image: postgres:16.1
-    container_name: stats-db
+    container_name: analyzer-db
     ports:
       - "6541:5432"
-    volumes:
-      - ./stats/stats-server/src/main/resources/db:/var/lib/postgresql/data
-      - ./stats/stats-server/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
-      - POSTGRES_DB=statsdb
+      - POSTGRES_DB=analyzer
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=12345
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
-      interval: 5s
+      interval: 10s
       retries: 10
 
   main-db:
