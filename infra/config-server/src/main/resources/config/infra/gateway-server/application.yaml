@@ -21,7 +21,19 @@ spring:
     gateway:
       discovery.locator.enabled: true
       routes:
-        - id: main_service_route
-          uri: lb://main-service
+        - id: user-service
+          uri: lb://user-service
           predicates:
-            - Path=/**
+            - Path=/admin/users/**
+        - id: request-service
+          uri: lb://request-service
+          predicates:
+            - Path=/users/*/requests/**, /requests/**
+        - id: stats-server
+          uri: lb://stats-server
+          predicates:
+            - Path=/hit/**, /stats/**
+        - id: event-service
+          uri: lb://event-service
+          predicates:
+            - Path=/admin/events/**, /users/*/events/**, /users/*/events/*/requests/**, /events/**, /categories/**, /admin/categories/**, /admin/compilations/**, /compilations/**, /users/*/events/*/comments/**, /events/*/comments/**
