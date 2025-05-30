@@ -13,8 +13,6 @@
     <name>stats</name>
     <modules>
         <module>stats-client</module>
-        <module>stats-dto</module>
-        <module>stats-server</module>
     </modules>
 
 </project>
