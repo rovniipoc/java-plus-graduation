@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS weights
     id        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id   BIGINT        NOT NULL,
     event_id  BIGINT        NOT NULL,
-    weight    DECIMAL(6, 5) NOT NULL,
+    weight    DOUBLE PRECISION NOT NULL,
     timestamp TIMESTAMP     NOT NULL,
     CONSTRAINT uq_user_event UNIQUE (user_id, event_id)
 );
