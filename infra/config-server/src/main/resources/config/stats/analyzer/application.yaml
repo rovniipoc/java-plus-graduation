@@ -13,7 +13,7 @@ kafka:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://analyzer-db:6541/analyzer
+    url: jdbc:postgresql://localhost:6541/analyzer
     username: dbuser
     password: 12345
   jpa:

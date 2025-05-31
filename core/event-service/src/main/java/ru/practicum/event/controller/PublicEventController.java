@@ -27,9 +27,11 @@ public class PublicEventController {
     private final PublicEventService publicEventService;
 
     @GetMapping("/{id}")
-    public EventFullDto getEventById(@PathVariable long id, HttpServletRequest request) {
+    public EventFullDto getEventById(@PathVariable long id,
+                                     @RequestHeader("X-EWM-USER-ID") Long userId,
+                                     HttpServletRequest request) {
         log.info("Поступил запрос Get /events/{} на получение Event с id = {}", id, id);
-        EventFullDto response = publicEventService.getEventById(id, request);
+        EventFullDto response = publicEventService.getEventById(id, userId, request);
         log.info("Сформирован ответ Get /events/{} с телом: {}", id, response);
         return response;
     }
@@ -55,6 +57,24 @@ public class PublicEventController {
                                          HttpServletRequest request) {
         log.info("Поступил запрос Get /events на получение Events с text = {}, size = {}", text, size);
         return publicEventService.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sorts, from, size, request);
+    }
+
+    @GetMapping("/recommendations")
+    public List<EventShortDto> getRecommendations(@RequestHeader("X-EWM-USER-ID") Long userId,
+                                                  @RequestParam Integer maxResults) {
+        log.info("Поступил запрос Get /events/recommendations на получение рекомендаций Events для пользователя с id = {}, кол-во событий = {}", userId, maxResults);
+        List<EventShortDto> response = publicEventService.getRecommendations(userId, maxResults);
+        log.info("Сформирован ответ Get /events/recommendations с телом: {}", response);
+        return response;
+
+    }
+
+    @PutMapping("/{eventId}/like")
+    public void likeEvent(@PathVariable Long eventId,
+                          @RequestHeader("X-EWM-USER-ID") Long userId) {
+        log.info("Поступил запрос Put /events/{}/like на лайк события с id = {} пользователем с id = {}", eventId, eventId, userId);
+        publicEventService.likeEvent(eventId, userId);
+        log.info("Обработан запрос Put /events/{}/like на лайк события с id = {} пользователем с id = {}", eventId, eventId, userId);
     }
 
 }

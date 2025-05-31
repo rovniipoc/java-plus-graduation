@@ -1,0 +1,15 @@
+logging:
+  level:
+    ru.yandex.practicum: debug
+    root: info
+
+grpc:
+  server:
+    port: 0
+
+server:
+  port: 0
+
+kafka:
+  topic: stats.user-actions.v1
+  bootstrap-server: localhost:9092
