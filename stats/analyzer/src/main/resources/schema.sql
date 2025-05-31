@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS similarities
     id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     event_a_id BIGINT        NOT NULL,
     event_b_id BIGINT        NOT NULL,
-    score      DECIMAL(6, 5) NOT NULL,
+    score      DOUBLE PRECISION NOT NULL,
     timestamp  TIMESTAMP     NOT NULL,
     CONSTRAINT uq_event_a_event_b UNIQUE (event_a_id, event_b_id)
 );
