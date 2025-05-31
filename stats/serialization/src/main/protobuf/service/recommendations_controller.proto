@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ru.practicum.ewm.analyzer.service;
+package stats.service.dashboard;
 
 import "message/recommendation_request.proto";
 
