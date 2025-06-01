@@ -13,8 +13,8 @@ public class KafkaProperties {
     private String bootstrapServer;
     private String topic;
     private Integer retriesCount;
-    private Long retryBackOffMs;
+    private Integer retryBackOffMs;
     private Boolean isIdempotence;
-    private Long batchSize;
-    private Long lingerMs;
+    private Integer batchSize;
+    private Integer lingerMs;
 }
