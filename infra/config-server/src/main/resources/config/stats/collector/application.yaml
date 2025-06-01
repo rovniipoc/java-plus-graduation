@@ -13,3 +13,8 @@ server:
 kafka:
   topic: stats.user-actions.v1
   bootstrap-server: localhost:9092
+  retriesCount: 5
+  retryBackOffMs: 1000
+  isIdempotence: true
+  batchSize: 10000
+  lingerMs: 5

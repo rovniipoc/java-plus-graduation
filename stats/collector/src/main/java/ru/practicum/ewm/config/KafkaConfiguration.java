@@ -25,6 +25,11 @@ public class KafkaConfiguration {
             config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServer());
             config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
             config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, GeneralAvroSerializer.class.getName());
+            config.put(ProducerConfig.RETRIES_CONFIG, kafkaProperties.getRetriesCount());
+            config.put(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, kafkaProperties.getRetryBackOffMs());
+            config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, kafkaProperties.getIsIdempotence());
+            config.put(ProducerConfig.BATCH_SIZE_CONFIG, kafkaProperties.getBatchSize());
+            config.put(ProducerConfig.LINGER_MS_CONFIG, kafkaProperties.getLingerMs());
             producer = new KafkaProducer<>(config);
         }
         return producer;
