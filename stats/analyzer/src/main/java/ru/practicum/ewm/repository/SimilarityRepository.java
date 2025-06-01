@@ -22,24 +22,14 @@ public interface SimilarityRepository extends JpaRepository<Similarity, Long> {
     List<Similarity> findAllByEventId(@Param("eventId") long eventId);
 
     @Query("""
-        SELECT s
-        FROM Similarity s
-        WHERE s.eventAId IN :eventIds
-           OR s.eventBId IN :eventIds
-        ORDER BY s.score DESC
+    SELECT s
+    FROM Similarity s
+    WHERE (s.eventAId IN :interactedEventIds AND s.eventBId IN :candidateEventIds)
+       OR (s.eventBId IN :interactedEventIds AND s.eventAId IN :candidateEventIds)
+    ORDER BY s.score DESC
     """)
-    List<Similarity> findAllBetweenCandidatesAndInteracted(@Param("eventIds") List<Long> eventIds);
-
-    @Query("""
-            SELECT s
-            FROM Similarity s
-            WHERE
-                (s.eventAId IN :newEventIds AND s.eventBId IN :interactedEventIds)
-                OR
-                (s.eventBId IN :newEventIds AND s.eventAId IN :interactedEventIds)
-            """)
-    List<Similarity> findAllBetweenCandidatesAndInteracted(
-            @Param("newEventIds") Set<Long> newEventIds,
-            @Param("interactedEventIds") Set<Long> interactedEventIds);
-
+    List<Similarity> findSimilaritiesForRecommendation(
+            @Param("interactedEventIds") Set<Long> interactedEventIds,
+            @Param("candidateEventIds") Set<Long> candidateEventIds
+    );
 }

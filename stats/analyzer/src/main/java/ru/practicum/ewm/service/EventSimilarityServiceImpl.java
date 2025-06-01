@@ -10,11 +10,13 @@ import ru.practicum.ewm.model.RecommendedEvent;
 import ru.practicum.ewm.model.Similarity;
 import ru.practicum.ewm.model.Weight;
 import ru.practicum.ewm.repository.SimilarityRepository;
+import ru.practicum.ewm.repository.WeightRepository;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.message.RecommendedEventProto;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ public class EventSimilarityServiceImpl implements EventSimilarityService {
     private final RecommendationsMapper recommendationsMapper;
     private final SimilarityRepository similarityRepository;
     private final UserActionService userActionService;
+    private final WeightRepository weightRepository;
 
     @Transactional
     public void updateOrCreateSimilarity(EventSimilarityAvro eventSimilarityAvro) {
@@ -76,40 +79,44 @@ public class EventSimilarityServiceImpl implements EventSimilarityService {
 
 
     public List<RecommendedEventProto> getRecommendationsForUser(long userId, int limit) {
-        // 1. Выгрузить мероприятия, с которыми пользователь недавно взаимодействовал
-        List<Long> lastInteracted = userActionService.getLastInteractedEvents(userId, limit);
-        if (lastInteracted.isEmpty()) {
+        // 1. Все события, с которыми пользователь взаимодействовал
+        Set<Long> interactedEventIds = weightRepository.findAllEventIdByUserId(userId);
+        if (interactedEventIds.isEmpty()) {
             log.debug("No interacted events found for user {}", userId);
             return Collections.emptyList();
         }
 
-        // 2. Найти похожие новые
-        List<Similarity> similarToInteracted = similarityRepository.findAllBetweenCandidatesAndInteracted(lastInteracted);
-        log.debug("Fetched {} similarities ", similarToInteracted.size());
+        // 2. Последние просмотренные события (берём из того же списка)
+        List<Long> lastInteracted = new ArrayList<>(interactedEventIds);
+        Collections.reverse(lastInteracted); // если нужно взять последние N
+        List<Long> topLastInteracted = lastInteracted.subList(0, Math.min(limit, lastInteracted.size()));
 
-        // 3. Отобрать те с которыми пользователь не взаимодействовал
-        Set<Long> interacted = userActionService.getAllEventIdByUserId(userId);
-        List<Long> recommendedCandidates = getNotInteractedEvents(similarToInteracted, interacted, limit);
+        // 3. Похожие мероприятия одним запросом
+        List<Similarity> allSimilarities = similarityRepository.findSimilaritiesForRecommendation(
+                interactedEventIds,
+                new HashSet<>(topLastInteracted)
+        );
 
-        // 4. Найти K ближайших (по similarity) соседей для кандидатов в рекомендацию среди просмотренных мероприятий
-        List<Similarity> interactedSimilarToCandidates = similarityRepository
-                .findAllBetweenCandidatesAndInteracted(new HashSet<>(recommendedCandidates), interacted);
-        Set<Long> neighborEventIds = interactedSimilarToCandidates.stream()
-                .map(s ->
-                        recommendedCandidates.contains(s.getEventAId()) ?
-                                s.getEventBId() :
-                                s.getEventAId())
+        // 4. Формируем уникальные кандидаты
+        Set<Long> recommendedCandidates = allSimilarities.stream()
+                .flatMap(s -> Stream.of(s.getEventAId(), s.getEventBId()))
+                .filter(id -> !interactedEventIds.contains(id))
+                .distinct()
+                .limit(limit)
                 .collect(Collectors.toSet());
 
-        // 5. Для всех соседей, полученных на предыдущем этапе, выгрузить оценки, которые поставил пользователь
-        List<Weight> neighborWeights = userActionService.getByUserIdAndEventIds(userId, neighborEventIds);
+        // 5. Получаем все веса для кандидатов и их "соседей" за один запрос
+        Set<Long> allRelevantEventIds = new HashSet<>(recommendedCandidates);
+        allRelevantEventIds.addAll(interactedEventIds);
+
+        List<Weight> neighborWeights = weightRepository.findByUserIdAndEventIdIn(userId, allRelevantEventIds);
         Map<Long, Double> weightsMap = neighborWeights.stream()
                 .collect(Collectors.toMap(Weight::getEventId, Weight::getWeight));
 
         // 6. Map candidateId → List<Neighbor>
         Map<Long, List<Neighbor>> candidateNeighborsMap = buildCandidateNeighborsMap(
-                interactedSimilarToCandidates,
-                new HashSet<>(recommendedCandidates),
+                allSimilarities,
+                recommendedCandidates,
                 weightsMap
         );
 
@@ -137,25 +144,6 @@ public class EventSimilarityServiceImpl implements EventSimilarityService {
     }
 
 
-
-    private List<Long> getNotInteractedEvents(List<Similarity> similarities, Set<Long> interacted, int limit) {
-        return similarities.stream()
-                .map(s -> {
-                    Long a = s.getEventAId();
-                    Long b = s.getEventBId();
-                    if (interacted.contains(a) && !interacted.contains(b)) {
-                        return b; // Если взаимодействовали с A, но не с B — кандидат для рекомендации B
-                    }
-                    if (interacted.contains(b) && !interacted.contains(a)) {
-                        return a; // Если взаимодействовали с B, но не с A — кандидат для рекомендации A
-                    }
-                    return null; // Если взаимодействовали с A и B — не подходит
-                })
-                .filter(Objects::nonNull)
-                .distinct()
-                .limit(limit)
-                .toList();
-    }
 
     private Map<Long, List<Neighbor>> buildCandidateNeighborsMap(
             List<Similarity> similarities,

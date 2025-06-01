@@ -15,7 +15,8 @@ public interface WeightRepository extends JpaRepository<Weight, Long> {
     List<Weight> findAllByEventIdIn(List<Long> eventIds);
 
     @Query("""
-            SELECT w.eventId FROM Weight w
+            SELECT w.eventId
+            FROM Weight w
             WHERE w.userId = :userId
             """)
     Set<Long> findAllEventIdByUserId(@Param("userId")long userId);
