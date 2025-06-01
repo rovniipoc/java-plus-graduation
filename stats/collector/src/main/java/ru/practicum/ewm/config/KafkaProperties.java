@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class KafkaProperties {
     private String bootstrapServer;
     private String topic;
-    private Long retriesCount;
+    private Integer retriesCount;
     private Long retryBackOffMs;
     private Boolean isIdempotence;
     private Long batchSize;
