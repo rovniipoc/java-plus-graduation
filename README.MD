@@ -1,6 +1,7 @@
-# Описание проекта
+# Описание проекта Explore With Me (англ. «исследуй со мной»)
 
-Проект состоит из следующих модулей и сервисов:
+Сервис позволяет пользователям делиться информацией об интересных событиях и находить компанию для участия в них.
+Проект разработан по микросервисной архитектуре и состоит из следующих модулей и сервисов:
 
 ## Модуль `core`
 Содержит основные сервисы, отвечающие за бизнес-логику приложения:
@@ -28,3 +29,23 @@
 Спецификации внешнего API можно найти по следующим ссылкам:
 1. [Спецификация основного сервиса](https://github.com/rovniipoc/java-plus-graduation/blob/microservices/ewm-main-service-spec.json)
 2. [Спецификация сервиса статистики](https://github.com/rovniipoc/java-plus-graduation/blob/microservices/ewm-stats-service-spec.json)
+
+## Стек технологий
+Java
+Spring Boot
+Spring Data
+Spring Cloud (Config, Eureka, Gateway)
+Hibernate
+REST API
+PostgreSQL
+Lombok
+Maven
+Docker
+Postman
+Микросервисная архитектура
+gRPC
+Protobuf
+AVRO
+Kafka
+Feign Client
+Circuit Breaker
