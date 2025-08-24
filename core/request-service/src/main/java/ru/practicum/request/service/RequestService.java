@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
+import ru.practicum.ewm.CollectorClient;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ParticipantLimitReachedException;
 import ru.practicum.exception.ValidationException;
@@ -33,6 +34,7 @@ public class RequestService {
     private final RequestRepository requestRepository;
     private final EventServiceClient eventServiceClient;
     private final UserServiceClient userServiceClient;
+    private final CollectorClient collectorClient;
 
     public List<ParticipationRequestDto> getRequestsOfUser(Long userId) {
         getUserOrThrow(userId);
@@ -78,6 +80,8 @@ public class RequestService {
         if (RequestStatus.CONFIRMED.equals(savedRequest.getStatus())) {
             updateConfirmedRequests(event.getId());
         }
+
+        collectorClient.sendEventRegistration(userId, eventId);
         return RequestMapper.toParticipationRequestDto(savedRequest);
     }
 

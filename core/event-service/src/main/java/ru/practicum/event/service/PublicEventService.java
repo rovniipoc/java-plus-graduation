@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PublicEventService {
-    EventFullDto getEventById(long id, HttpServletRequest request);
+    EventFullDto getEventById(long id, Long userId, HttpServletRequest request);
 
     Optional<Event> getEventFullById(long id);
 
@@ -25,4 +25,8 @@ public interface PublicEventService {
                                   int from,
                                   int size,
                                   HttpServletRequest request);
+
+    List<EventShortDto> getRecommendations(Long userId, Integer maxResults);
+
+    void likeEvent(Long eventId, Long userId);
 }

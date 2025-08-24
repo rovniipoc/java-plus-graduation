@@ -29,5 +29,5 @@ public class EventFullDto {
     private UserShortDto initiator;
     private CategoryDto category;
     private Long confirmedRequests; // Количество подтверждённых заявок
-    private Long views; // Количество просмотров
+    private Double rating;
 }
